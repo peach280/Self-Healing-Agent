@@ -1,0 +1,56 @@
+{
+  "f19303d37663e1a00e28d95e6358fc43": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 22.0, \"trip_distance\": 10.0, \"tpep_pickup_datetime\": \"2024-01-15T09:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T09:31:00\"}",
+    "explanation": "RULE 2 triggered, changed tpep_dropoff_datetime to 30 minutes after tpep_pickup_datetime",
+    "strategy": "time_shift",
+    "failing_service": "Driver_App_GPS",
+    "pytest_script": "",
+    "hits": 0
+  },
+  "25e2ddc5115c9fdfdeee24c83c04a610": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 50.0, \"trip_distance\": 3.2, \"tpep_pickup_datetime\": \"2024-01-15T18:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T18:22:00\"}",
+    "explanation": "RULE 1 triggered because fare_amount was less than 0, so we changed fare_amount to its absolute value",
+    "strategy": "abs",
+    "failing_service": "Payment_Gateway",
+    "pytest_script": "",
+    "hits": 0
+  },
+  "fa4780860150057a32e80554e12a653f": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 22.0, \"trip_distance\": 3.2, \"tpep_pickup_datetime\": \"2024-01-15T09:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T09:30:00\"}",
+    "explanation": "RULE 2 triggered, changing tpep_dropoff_datetime from 2024-01-15T09:00:00 to 2024-01-15T09:30:00 because tpep_dropoff_datetime was less than or equal to tpep_pickup_datetime",
+    "strategy": "time_shift",
+    "failing_service": "Driver_App_GPS",
+    "pytest_script": "",
+    "hits": 0
+  },
+  "445711ab99fdf99a9676182687eaa052": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 22.0, \"trip_distance\": 0.22222222222222222, \"tpep_pickup_datetime\": \"2024-01-15T09:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T09:01:00\"}",
+    "explanation": "RULE 3 triggered, changed trip_distance to 80 * duration_hours * 0.9 because the calculated speed was greater than 80",
+    "strategy": "recalculate",
+    "failing_service": "Central_Dispatch",
+    "pytest_script": "",
+    "hits": 0
+  },
+  "6a2f0646cccb45d33bd9d890c87ac829": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 20.0, \"trip_distance\": 3.2, \"discount_amount\": 0.0, \"tpep_pickup_datetime\": \"2024-01-15T09:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T09:30:00\"}",
+    "explanation": "RULE 4 triggered, changed discount_amount from 100.0 to 0.0 because it exceeded fare_amount",
+    "strategy": "nullify",
+    "failing_service": "Promo_Engine",
+    "pytest_script": "",
+    "hits": 0
+  },
+  "a7ce16604eb2a24bd3664d065082e727": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 50.0, \"trip_distance\": 3.2, \"tpep_pickup_datetime\": \"2024-01-15T18:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T18:22:00\"}",
+    "explanation": "RULE 1 triggered, changed fare_amount from -50.0 to 50.0 because it was negative",
+    "strategy": "abs",
+    "failing_service": "Payment_Gateway",
+    "pytest_script": "",
+    "hits": 1
+  }
+}
