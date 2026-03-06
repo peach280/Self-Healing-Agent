@@ -11,6 +11,8 @@ function DiffViewer({ original, fixed }) {
   try {
     originalObj = JSON.parse(original);
     fixedObj    = JSON.parse(fixed);
+    console.log(originalObj)
+    console.log(fixedObj)
   } catch {
     return (
       <div className="grid grid-cols-2 gap-3">
@@ -368,7 +370,7 @@ useEffect(() => {
               DOMAIN
             </label>
             <div className="flex flex-col gap-2">
-              {["DATA_PIPELINE", "CODE_ANALYSIS"].map((d) => (
+              {["DATA_PIPELINE"].map((d) => (
                 <button
                   key={d}
                   onClick={() => setDomain(d)}
@@ -390,7 +392,7 @@ useEffect(() => {
               INCIDENT TYPE
             </label>
             <div className="flex flex-col gap-2">
-              {["DATA_CRASH", "CODE_ANALYSIS"].map((t) => (
+              {["DATA_CRASH"].map((t) => (
                 <button
                   key={t}
                   onClick={() => setIncidentType(t)}
@@ -425,19 +427,6 @@ useEffect(() => {
           </div>
 
           {/* Error Signature */}
-          <div>
-            <label className="text-xs tracking-widest text-gray-500 mb-2 block">
-              ERROR SIGNATURE
-              <span className="text-gray-700 ml-2">— optional</span>
-            </label>
-            <textarea
-              rows={3}
-              value={errorSignature}
-              onChange={(e) => setErrorSignature(e.target.value)}
-              placeholder="SemanticDataError: fare_amount must be >= 0"
-              className="w-full bg-slate-900 border border-gray-800 rounded p-3 text-sm text-gray-300 placeholder-gray-700 focus:outline-none focus:border-emerald-500/50 resize-none"
-            />
-          </div>
 
           {/* Heal Button */}
           <button

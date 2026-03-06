@@ -52,5 +52,32 @@
     "failing_service": "Payment_Gateway",
     "pytest_script": "",
     "hits": 1
+  },
+  "943c6f9e9557e2c104917f64f1a7f6fc": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 75.0, \"trip_distance\": 4.2, \"tpep_pickup_datetime\": \"2024-01-15T10:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T10:35:00\"}",
+    "explanation": "RULE 1 triggered, changed fare_amount from -75.0 to 75.0",
+    "strategy": "abs",
+    "failing_service": "Payment_Gateway",
+    "pytest_script": "",
+    "hits": 2
+  },
+  "d5386c071d5465749f1e54416f805cfe": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 18.0, \"trip_distance\": 2.8, \"tpep_pickup_datetime\": \"2024-01-15T14:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T14:15:00\"}",
+    "explanation": "RULE 2 triggered, changed tpep_dropoff_datetime from 2024-01-15T13:45:00 to 2024-01-15T14:15:00",
+    "strategy": "time_shift",
+    "failing_service": "Driver_App_GPS",
+    "pytest_script": "",
+    "hits": 0
+  },
+  "2b5a458021e038fce61aa83f930d5659": {
+    "domain": "DATA_PIPELINE",
+    "fixed_data": "{\"fare_amount\": 35.0, \"trip_distance\": 2.4, \"tpep_pickup_datetime\": \"2024-01-15T09:00:00\", \"tpep_dropoff_datetime\": \"2024-01-15T09:02:00\"}",
+    "explanation": "RULE 3 triggered because the calculated speed was greater than 80, so we recalculated trip_distance",
+    "strategy": "recalculate",
+    "failing_service": "Central_Dispatch",
+    "pytest_script": "",
+    "hits": 1
   }
 }

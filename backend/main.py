@@ -196,8 +196,7 @@ def run_docker_sandbox(domain, fixed_data):
 
     # ── We write the test — not the AI ─────────────
     validation_script = build_validation_script(domain, fixed_data)
-    print("====================================")
-    print("This is a validation script")
+  
     print(validation_script)
     test_file = os.path.join(SANDBOX_DIR, "test_fix.py")
     try:
@@ -238,7 +237,7 @@ def run_docker_sandbox(domain, fixed_data):
         }
 def build_prompt(domain, incident_type, source_content, error_signature):
     if domain == "DATA_PIPELINE":
-        print(source_content)
+        # print(source_content)
         return f"""{SRE_PROMPT}
     
 
@@ -279,16 +278,40 @@ Respond ONLY in this JSON format (no markdown fences):
 def call_llm(domain, incident_type, source_content, error_signature):
     prompt = build_prompt(domain, incident_type, source_content, error_signature)
     
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",  # free, very capable
-        messages=[{"role": "user", "content": prompt}]
-    )
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}]
+        )
 
-    raw = response.choices[0].message.content.strip()
-    raw = raw.replace("```json", "").replace("```", "").strip()
-    print("Response returned from groq:")
-    print(raw)
-    return json.loads(raw)
+        raw = response.choices[0].message.content.strip()
+        
+        # 1. Cleaning logic: Remove any text before/after the JSON
+        # This looks for the first '{' and last '}'
+        start_idx = raw.find('{')
+        end_idx = raw.rfind('}')
+        
+        if start_idx != -1 and end_idx != -1:
+            raw = raw[start_idx:end_idx + 1]
+        
+        print("Cleaned raw response:", raw)
+
+        # 2. Defensive Loading
+        if not raw:
+            raise ValueError("Empty response from Groq")
+
+        return json.loads(raw)
+
+    except (json.JSONDecodeError, ValueError, Exception) as e:
+        print(f"SRE Critical Error: LLM Output Validation Failed - {e}")
+        
+        # 3. Fallback: Return a valid JSON object so the backend doesn't crash
+        return {
+            "fixed_data": source_content, # Return original data if fix fails
+            "failing_service": "SYSTEM_ERROR",
+            "root_cause_logic": f"LLM parsing failed: {str(e)}",
+            "strategy": "fallback_noop"
+        }
 @app.route("/stats", methods=["GET"])
 def stats():
     roi = load_roi()
@@ -347,7 +370,8 @@ def heal():
     groq_result = call_llm(domain, incident_type, source_content, error_signature)
     roi["llm_calls"] += 1
     roi["money_spent"] += GROQ_COST_PER_CALL
-
+    print("First fix")
+    print(groq_result)
     # ── Docker Guardrail — Attempt 1 ───────────────
     sandbox = run_docker_sandbox(domain,groq_result["fixed_data"])
     roi["docker_runs"] += 1
@@ -395,7 +419,8 @@ Fix the solution. Return same JSON format."""
     groq_result_v2 = call_llm(domain, incident_type, correction_prompt, error_signature)
     roi["llm_calls"] += 1
     roi["money_spent"] += GROQ_COST_PER_CALL
-
+    print("Second fix")
+    print(groq_result_v2)
     # ── Docker Guardrail — Attempt 2 ───────────────
     sandbox_v2 = run_docker_sandbox(domain,groq_result_v2["fixed_data"])
     roi["docker_runs"] += 1

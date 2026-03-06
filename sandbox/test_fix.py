@@ -3,7 +3,7 @@ import pytest
 import json
 from datetime import datetime
 
-fixed = {"fare_amount": 999999.0, "trip_distance": 99999.0, "tpep_pickup_datetime": "2024-01-15T09:00:00", "tpep_dropoff_datetime": "2024-01-15T09:30:00", "discount_amount": 999999.0}
+fixed = {"fare_amount": 35.0, "trip_distance": 2.4, "tpep_pickup_datetime": "2024-01-15T09:00:00", "tpep_dropoff_datetime": "2024-01-15T09:02:00"}
 
 def test_R1_fare_non_negative():
     assert fixed["fare_amount"] >= 0, f"fare_amount {fixed['fare_amount']} is negative"

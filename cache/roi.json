@@ -1,8 +1,8 @@
 {
-  "cache_hits": 1,
-  "llm_calls": 3,
-  "docker_runs": 3,
-  "hallucinations_blocked": 1,
-  "money_saved": 0.0007700000000000001,
-  "money_spent": 0.0023100000000000004
+  "cache_hits": 4,
+  "llm_calls": 12,
+  "docker_runs": 12,
+  "hallucinations_blocked": 3,
+  "money_saved": 0.0030800000000000003,
+  "money_spent": 0.00924
 }
