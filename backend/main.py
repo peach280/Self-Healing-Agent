@@ -277,6 +277,10 @@ Apply the FIRST rule that matches."""
     2. PROHIBITED: Do not use print(), requests, or any external networking libraries.
     3. LOGIC: All timestamps must ensure pickup < dropoff (Clinical Timeline Safety).
     4. FORMAT: Respond ONLY with a valid JSON object. No markdown, no "```json" blocks.
+    
+    IMPORTANT:
+    - Evaluate RULE 1 first, then RULE 2, then RULE 3, then RULE 4
+    - Apply ONLY the FIRST rule that matches — stop immediately after
 
     [SOURCE CODE]:
     {source_content}

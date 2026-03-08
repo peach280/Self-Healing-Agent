@@ -3,7 +3,7 @@ import pytest
 import ast
 
 # The AI-generated clinical summary or workflow script
-source = '''import datetime\n\ndef log_ultrasound_session():\n    # Start: 10:15 AM, End: 10:30 AM (Corrected)\n    start_time = \"2026-03-08T10:15:00\"\n    end_time = \"2026-03-08T10:30:00\" \n\n    return {\"start\": start_time, \"end\": end_time}'''
+source = '''import dicom_utils\nimport json\nimport pydantic\n\nclass PatientData(pydantic.BaseModel):\n    scan_id: str\n    patient_info: dict = dicom_utils.get_meta(scan_id)\n\ndef process_scan(scan_id):\n    patient_data = PatientData(scan_id=scan_id)\n    return patient_data.json()'''
 
 def test_M1_syntax_valid():
     try:
