@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const SERVICES = [
   { id: "Payment_Gateway",  icon: "💳", position: "top-left" },
   { id: "Driver_App_GPS",   icon: "📍", position: "top-right" },
-  { id: "Central_Dispatch", icon: "🖥️", position: "bottom-left" },
+  { id: "Distance Compute", icon: "🖥️", position: "bottom-left" },
   { id: "Promo_Engine",     icon: "🎟️", position: "bottom-right" },
 ];
 

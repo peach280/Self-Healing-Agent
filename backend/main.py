@@ -162,36 +162,45 @@ def test_R3_speed_limit():
     assert speed <= 80, f"speed {{speed:.1f}} mph exceeds 80 mph limit"
 """
 
-    elif domain == "CODE_ANALYSIS":
+    elif domain == "MEDICAL_WORKFLOW_ANALYSIS":
         return f"""
 import pytest
 import ast
 
+# The AI-generated clinical summary or workflow script
 source = '''{fixed_data}'''
 
-def test_R1_syntax_valid():
+def test_M1_syntax_valid():
     try:
         ast.parse(source)
     except SyntaxError as e:
-        pytest.fail(f"Syntax error in fixed code: {{e}}")
+        pytest.fail(f"Critical: AI-generated workflow contains syntax errors: {{e}}")
 
-def test_R2_no_hallucinated_imports():
-    allowed = {{"pandas", "numpy", "datetime", "json", 
-                "os", "re", "math", "collections", "itertools"}}
+def test_M2_clinical_safety_libraries():
+    
+    # Example Siemens/Clinical allowed libraries
+    allowed = {{"dicom_utils", "siemens_rad_lib", "datetime", "json", "pydantic", "re"}}
+    
     tree = ast.parse(source)
     for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                lib = alias.name.split(".")[0]
-                assert lib in allowed, f"Hallucinated library detected: {{lib}}"
-        if isinstance(node, ast.ImportFrom):
-            if node.module:
-                lib = node.module.split(".")[0]
-                assert lib in allowed, f"Hallucinated library detected: {{lib}}"
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            names = node.names if isinstance(node, ast.Import) else [ast.alias(name=node.module, asname=None)]
+            for alias in names:
+                if alias.name:
+                    lib = alias.name.split(".")[0]
+                    assert lib in allowed, f"Safety Violation: Unauthorized or hallucinated library detected: {{lib}}"
 
-def test_R3_no_empty_fix():
-    assert source.strip() != "", "Fixed content is empty"
-"""
+def test_M3_no_pii_leakage_functions():
+    
+    forbidden_calls = {{"print", "export_raw", "upload_unencrypted"}}
+    tree = ast.parse(source)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            assert node.func.id not in forbidden_calls, f"Compliance Risk: Forbidden function call '{{node.func.id}}' detected."
+
+def test_M4_enforce_structured_reporting():
+    assert len(source.strip()) > 50, "Validation Failed: Clinical output is too sparse or empty."
+    """
 def run_docker_sandbox(domain, fixed_data):
 
     # ── We write the test — not the AI ─────────────
@@ -206,6 +215,7 @@ def run_docker_sandbox(domain, fixed_data):
         print(e)
 
     try:
+        print("Docker sandbox running the fix")
         result = subprocess.run(
             [
                 "docker", "run", "--rm",
@@ -255,25 +265,33 @@ Before responding, calculate:
 
 Apply the FIRST rule that matches."""
 
-    elif domain == "CODE_ANALYSIS":
-        return f"""You are a Senior Software Engineer.
-Fix the buggy Python code below.
-Only use standard libraries or pandas/numpy.
-No hallucinated libraries.
+    elif domain == "MEDICAL_WORKFLOW_ANALYSIS":
+        
+        return f"""
+    System: You are a Senior Clinical Software Architect at Siemens Healthineers. 
+    Your task is to fix Python scripts used in Ultrasound/AI-Rad Companion workflows.
+    Strictly adhere to medical software safety standards.
 
-Source:
-{source_content}
+    [CONSTRAINTS]:
+    1. USE ONLY the following allowed libraries: dicom_utils, siemens_rad_lib, datetime, json, pydantic, re.
+    2. PROHIBITED: Do not use print(), requests, or any external networking libraries.
+    3. LOGIC: All timestamps must ensure pickup < dropoff (Clinical Timeline Safety).
+    4. FORMAT: Respond ONLY with a valid JSON object. No markdown, no "```json" blocks.
 
-Error:
-{error_signature if error_signature else "No error provided"}
+    [SOURCE CODE]:
+    {source_content}
 
-Respond ONLY in this JSON format (no markdown fences):
-{{
-  "fixed_data": "the corrected code",
-  "failing_service": "CODE_ANALYSIS",
-  "root_cause_logic": "what was wrong and what you changed",
-  "strategy": "code_fix"
-}}"""
+    [EXECUTION ERROR]:
+    {error_signature if error_signature else "Deterministic validation failed in Docker Sandbox."}
+
+    [RESPONSE SCHEMA]:
+    {{
+    "fixed_data": "The corrected Python code string (escaped for JSON)",
+    "failing_service": "MEDICAL_WORKFLOW_ANALYSIS",
+    "root_cause_logic": "Explain the specific violation (e.g., PII risk, library hallucination, or timeline drift)",
+    "strategy": "Describe the deterministic fix applied"
+    }}
+    """
 
 def call_llm(domain, incident_type, source_content, error_signature):
     prompt = build_prompt(domain, incident_type, source_content, error_signature)
@@ -367,11 +385,12 @@ def heal():
         })
         
     # ── Groq call ──────────────────────────────────
+    print("LLM generating fix...")
     groq_result = call_llm(domain, incident_type, source_content, error_signature)
     roi["llm_calls"] += 1
     roi["money_spent"] += GROQ_COST_PER_CALL
-    print("First fix")
-    print(groq_result)
+    # print("First fix")
+    # print(groq_result)
     # ── Docker Guardrail — Attempt 1 ───────────────
     sandbox = run_docker_sandbox(domain,groq_result["fixed_data"])
     roi["docker_runs"] += 1
@@ -419,8 +438,8 @@ Fix the solution. Return same JSON format."""
     groq_result_v2 = call_llm(domain, incident_type, correction_prompt, error_signature)
     roi["llm_calls"] += 1
     roi["money_spent"] += GROQ_COST_PER_CALL
-    print("Second fix")
-    print(groq_result_v2)
+    # print("Second fix")
+    # print(groq_result_v2)
     # ── Docker Guardrail — Attempt 2 ───────────────
     sandbox_v2 = run_docker_sandbox(domain,groq_result_v2["fixed_data"])
     roi["docker_runs"] += 1

@@ -7,28 +7,42 @@ import SystemLog from "./SystemLog";
 function DiffViewer({ original, fixed }) {
   if (!original || !fixed) return null;
 
+  // ── Normalize both to strings ──────────────
+  const originalStr = typeof original === "object"
+    ? JSON.stringify(original)
+    : original;
+
+  const fixedStr = typeof fixed === "object"
+    ? JSON.stringify(fixed)
+    : fixed;
+
   let originalObj, fixedObj;
   try {
-    originalObj = JSON.parse(original);
-    fixedObj    = JSON.parse(fixed);
-    console.log(originalObj)
-    console.log(fixedObj)
+    originalObj = JSON.parse(originalStr);
+    fixedObj    = JSON.parse(fixedStr);
   } catch {
     return (
       <div className="grid grid-cols-2 gap-3">
         <div>
           <div className="text-xs text-red-400 tracking-widest mb-2">BEFORE</div>
-          <pre className="bg-red-400/5 border border-red-400/20 rounded p-3 text-xs text-red-300 overflow-auto">{original}</pre>
+          <pre className="bg-red-400/5 border border-red-400/20 rounded p-3 text-xs text-red-300 overflow-auto">
+            {originalStr}
+          </pre>
         </div>
         <div>
           <div className="text-xs text-green-400 tracking-widest mb-2">AFTER</div>
-          <pre className="bg-green-400/5 border border-green-400/20 rounded p-3 text-xs text-green-300 overflow-auto">{fixed}</pre>
+          <pre className="bg-green-400/5 border border-green-400/20 rounded p-3 text-xs text-green-300 overflow-auto">
+            {fixedStr}
+          </pre>
         </div>
       </div>
     );
   }
 
-  const allKeys = [...new Set([...Object.keys(originalObj), ...Object.keys(fixedObj)])];
+  const allKeys = [...new Set([
+    ...Object.keys(originalObj),
+    ...Object.keys(fixedObj)
+  ])];
 
   return (
     <div>
@@ -38,9 +52,13 @@ function DiffViewer({ original, fixed }) {
       </div>
       <div className="border border-gray-800 rounded overflow-hidden">
         {allKeys.map((key) => {
-          const changed = JSON.stringify(originalObj[key]) !== JSON.stringify(fixedObj[key]);
+          const changed = JSON.stringify(originalObj[key]) 
+                       !== JSON.stringify(fixedObj[key]);
           return (
-            <div key={key} className={`grid grid-cols-2 text-xs ${changed ? "bg-yellow-400/5" : ""}`}>
+            <div
+              key={key}
+              className={`grid grid-cols-2 text-xs ${changed ? "bg-yellow-400/5" : ""}`}
+            >
               <div className={`p-2 border-r border-b border-gray-800 ${changed ? "text-red-400" : "text-gray-600"}`}>
                 <span className="text-gray-700">{key}: </span>
                 {String(originalObj[key])}
@@ -370,7 +388,7 @@ useEffect(() => {
               DOMAIN
             </label>
             <div className="flex flex-col gap-2">
-              {["DATA_PIPELINE"].map((d) => (
+              {["DATA_PIPELINE","MEDICAL_WORKFLOW_ANALYSIS"].map((d) => (
                 <button
                   key={d}
                   onClick={() => setDomain(d)}

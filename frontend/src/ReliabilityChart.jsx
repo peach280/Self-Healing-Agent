@@ -17,7 +17,7 @@ export default function ReliabilityChart({ leaderboard }) {
   const colors = {
     Payment_Gateway:  "bg-red-500",
     Driver_App_GPS:   "bg-orange-500",
-    Central_Dispatch: "bg-yellow-500",
+    Distance_Compute: "bg-yellow-500",
     Promo_Engine:     "bg-purple-500",
   };
 
