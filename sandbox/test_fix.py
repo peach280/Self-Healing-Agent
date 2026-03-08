@@ -3,7 +3,7 @@ import pytest
 import ast
 
 # The AI-generated clinical summary or workflow script
-source = '''import dicom_utils\n\ndef process_scan(scan_id):\n    # Retrieve patient data from local DICOM repository\n    data = dicom_utils.get_meta(scan_id)\n    # Perform in-memory processing or use approved libraries for analysis\n    # Ensure clinical timeline safety by verifying pickup < dropoff timestamps\n    return {\"status\": \"Processed\"}'''
+source = '''import datetime\n\ndef log_ultrasound_session():\n    # Start: 10:15 AM, End: 10:30 AM (Corrected)\n    start_time = \"2026-03-08T10:15:00\"\n    end_time = \"2026-03-08T10:30:00\" \n\n    return {\"start\": start_time, \"end\": end_time}'''
 
 def test_M1_syntax_valid():
     try:
