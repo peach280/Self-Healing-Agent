@@ -12,6 +12,4 @@ This system implements a **Deterministic Validation Loop**:
 ![alt text](image.png)
 
 ## Demo
-<video controls src="https://github.com/peach280/Self-Healing-Agent/raw/master/ProjectWalkthrough.mp4" width="100%">
-  Your browser does not support the video tag.
-</video>
+<video controls src="ProjectWalkthrough.mp4" title="Title"></video>
