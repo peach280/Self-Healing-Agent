@@ -18,7 +18,8 @@ https://github.com/user-attachments/assets/30cc15cf-8030-42d5-a5e1-d1a77603e3bd
 ## Setup
 
 Follow the steps below to set up the **Self-Healing-Agent** project locally.
-
+Create your env file at the root of the project.
+Add groq api key to it.
 ```bash
 git clone https://github.com/peach280/Self-Healing-Agent.git
 cd Self-Healing-Agent
@@ -30,4 +31,8 @@ cd frontend
 npm install 
 npm run dev
 ```
+#### Environment Configuration
+Create a `.env` file in the project directory and add your Groq API Key:
+```bash
+api_key=your_api_key_here
 
