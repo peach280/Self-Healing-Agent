@@ -12,4 +12,7 @@ This system implements a **Deterministic Validation Loop**:
 ![alt text](image.png)
 
 ## Demo
-<video controls src="ProjectWalkthrough.mp4" title="Title"></video>
+
+
+https://github.com/user-attachments/assets/30cc15cf-8030-42d5-a5e1-d1a77603e3bd
+
