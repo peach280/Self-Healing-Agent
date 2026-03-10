@@ -1,10 +1,17 @@
 ## Overview
-This project solves the problem of AI Reliability. When inconsistent data is passed the AI engine generates a fix but that's not all we 
-run it through docker sandbox to run deterministic checks. These checks provide reliability to the output. There is also caching implemented for pre generated fixes to save llm costs.
+This project addresses **AI Reliability** in automated code generation. While LLMs are proficient at generating fixes, they often produce "hallucinated" syntax or logically inconsistent code.
 
+This system implements a **Deterministic Validation Loop**:
+1. **Detection:** Identifies inconsistencies in input data.
+2. **Generation:** AI engine proposes a fix.
+3. **Sandboxing:** The fix is executed within a **Docker Sandbox** to run deterministic unit tests.
+4. **Validation:** Only verified code is returned to the user; failed attempts trigger a re-generation or error log.
+5. **Optimization:** Integrated **LRU Caching** stores verified fixes to minimize LLM latency and API costs.
 
-## Structural diagram
+## Architecture
 ![alt text](image.png)
 
-## Video walkthrough
-<video controls src="ProjectWalkthrough.mp4" title="Title"></video>
+## Demo
+<video controls src="https://github.com/peach280/Self-Healing-Agent/raw/master/ProjectWalkthrough.mp4" width="100%">
+  Your browser does not support the video tag.
+</video>
