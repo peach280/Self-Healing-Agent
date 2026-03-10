@@ -13,6 +13,22 @@ This system implements a **Deterministic Validation Loop**:
 
 ## Demo
 
-
 https://github.com/user-attachments/assets/30cc15cf-8030-42d5-a5e1-d1a77603e3bd
+
+## Setup
+
+Follow the steps below to set up the **Self-Healing-Agent** project locally.
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/peach280/Self-Healing-Agent.git
+cd Self-Healing-Agent
+cd backend
+docker build -t healer .
+python main.py 
+cd ..
+cd frontend
+npm install 
+npm run dev
+```
 
