@@ -1,38 +1,22 @@
 
 import pytest
-import ast
+import json
+from datetime import datetime
 
-# The AI-generated clinical summary or workflow script
-source = '''import dicom_utils\nimport json\nimport pydantic\n\nclass PatientData(pydantic.BaseModel):\n    scan_id: str\n    patient_info: dict = dicom_utils.get_meta(scan_id)\n\ndef process_scan(scan_id):\n    patient_data = PatientData(scan_id=scan_id)\n    return patient_data.json()'''
+fixed = {"fare_amount": 999.0, "trip_distance": 50.0, "discount_amount": 499.0, "tpep_pickup_datetime": "2024-01-15T09:00:00", "tpep_dropoff_datetime": "2024-01-15T09:55:00"}
 
-def test_M1_syntax_valid():
-    try:
-        ast.parse(source)
-    except SyntaxError as e:
-        pytest.fail(f"Critical: AI-generated workflow contains syntax errors: {e}")
+def test_R1_fare_non_negative():
+    assert fixed["fare_amount"] >= 0, f"fare_amount {fixed['fare_amount']} is negative"
 
-def test_M2_clinical_safety_libraries():
-    
-    # Example Siemens/Clinical allowed libraries
-    allowed = {"dicom_utils", "siemens_rad_lib", "datetime", "json", "pydantic", "re"}
-    
-    tree = ast.parse(source)
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.Import, ast.ImportFrom)):
-            names = node.names if isinstance(node, ast.Import) else [ast.alias(name=node.module, asname=None)]
-            for alias in names:
-                if alias.name:
-                    lib = alias.name.split(".")[0]
-                    assert lib in allowed, f"Safety Violation: Unauthorized or hallucinated library detected: {lib}"
+def test_R2_duration_positive():
+    pickup  = datetime.fromisoformat(fixed["tpep_pickup_datetime"])
+    dropoff = datetime.fromisoformat(fixed["tpep_dropoff_datetime"])
+    duration = (dropoff - pickup).total_seconds()
+    assert duration > 0, f"duration {duration}s is not positive"
 
-def test_M3_no_pii_leakage_functions():
-    
-    forbidden_calls = {"print", "export_raw", "upload_unencrypted"}
-    tree = ast.parse(source)
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            assert node.func.id not in forbidden_calls, f"Compliance Risk: Forbidden function call '{node.func.id}' detected."
-
-def test_M4_enforce_structured_reporting():
-    assert len(source.strip()) > 50, "Validation Failed: Clinical output is too sparse or empty."
-    
+def test_R3_speed_limit():
+    pickup  = datetime.fromisoformat(fixed["tpep_pickup_datetime"])
+    dropoff = datetime.fromisoformat(fixed["tpep_dropoff_datetime"])
+    duration_hours = (dropoff - pickup).total_seconds() / 3600
+    speed = fixed["trip_distance"] / duration_hours
+    assert speed <= 80, f"speed {speed:.1f} mph exceeds 80 mph limit"

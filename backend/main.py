@@ -222,7 +222,7 @@ def run_docker_sandbox(domain, fixed_data):
                 "--memory", "128m",
                 "--cpus", "0.5",
                 "-v", f"{os.path.abspath(SANDBOX_DIR)}:/app",
-                "my-healer-env",
+                "healer",
                 "pytest", "/app/test_fix.py", "-v"
             ],
             capture_output=True,

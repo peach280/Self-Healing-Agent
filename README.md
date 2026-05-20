@@ -20,15 +20,40 @@ https://github.com/user-attachments/assets/30cc15cf-8030-42d5-a5e1-d1a77603e3bd
 Follow the steps below to set up the **Self-Healing-Agent** project locally.
 Create your env file at the root of the project.
 Add groq api key to it.
+## Backend Setup
+
 ```bash
 git clone https://github.com/peach280/Self-Healing-Agent.git
-cd Self-Healing-Agent
-cd backend
+
+cd Self-Healing-Agent/backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate venv
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+# Install backend dependencies
+pip install -r requirements.txt
+
+# Build sandbox Docker image
 docker build -t healer .
-python main.py 
-cd ..
-cd frontend
-npm install 
+
+# Run backend
+python main.py
+```
+
+## Frontend Setup
+
+```bash
+cd ../frontend
+
+npm install
+
 npm run dev
 ```
 #### Environment Configuration
